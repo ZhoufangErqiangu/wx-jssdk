@@ -1,5 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { WxApiMethod, WxConfigData, WxImgSizeType, WxImgSource, wx } from ".";
+import {
+  WxApiMethod,
+  WxCard,
+  WxConfigData,
+  WxImgSizeType,
+  WxImgSource,
+  WxLocationType,
+  WxMenu,
+  WxNetworkType,
+  WxScanType,
+  wx,
+} from ".";
 
 /**
  * 微信JS-SDK是微信公众平台 面向网页开发者提供的基于微信内的网页开发工具包
@@ -203,6 +214,66 @@ export class WxClass {
   /**
    * 音频接口
    *
+   * 监听录音自动停止接口
+   */
+  public onVoiceRecordEnd(param: { localId: string }) {
+    return new Promise<{ localId: string }>((resolve, reject) => {
+      wx.onVoiceRecordEnd({
+        ...param,
+        complete: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 音频接口
+   *
+   * 播放语音接口
+   */
+  public playVoice(param: { localId: string }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.playVoice({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 音频接口
+   *
+   * 暂停播放接口
+   */
+  public pauseVoice(param: { localId: string }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.pauseVoice({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 音频接口
+   *
+   * 停止播放接口
+   */
+  public stopVoice(param: { localId: string }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.stopVoice({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 音频接口
+   *
    * 监听语音播放完毕接口
    */
   public onVoicePlayEnd(param: { localId: string }) {
@@ -254,6 +325,310 @@ export class WxClass {
     return new Promise<{ translateResult: string }>((resolve, reject) => {
       wx.translateVoice({
         ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 设备信息
+   *
+   * 获取网络状态接口
+   */
+  public getNetworkType() {
+    return new Promise<{ networkType: WxNetworkType }>((resolve, reject) => {
+      wx.getNetworkType({
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 地理位置
+   *
+   * 使用微信内置地图查看位置接口
+   */
+  public openLocation(param: {
+    latitude: number;
+    longitude: number;
+    name?: string;
+    address?: string;
+    scale?: number;
+    infoUrl?: string;
+  }) {
+    return new Promise<void>((resolve, reject) => {
+      wx.openLocation({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 地理位置
+   *
+   * 获取地理位置接口
+   */
+  public getLocation(param: { type?: WxLocationType }) {
+    return new Promise<{
+      latitude: number;
+      longitude: number;
+      speed: number;
+      accuracy: number;
+    }>((resolve, reject) => {
+      wx.getLocation({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 摇一摇周边
+   *
+   * 开启查找周边ibeacon设备接口
+   */
+  public startSearchBeacons(param: { ticket: string }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.startSearchBeacons({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 摇一摇周边
+   *
+   * 关闭查找周边ibeacon设备接口
+   */
+  public stopSearchBeacons() {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.stopSearchBeacons({
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 摇一摇周边
+   *
+   * 监听周边ibeacon设备接口
+   */
+  public onSearchBeacons() {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.onSearchBeacons({
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 界面操作
+   *
+   * 关闭当前网页窗口接口
+   */
+  public closeWindow() {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.closeWindow({
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 界面操作
+   *
+   * 批量隐藏功能按钮接口
+   */
+  public hideMenuItems(param: { menuList: WxMenu[] }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.hideMenuItems({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 界面操作
+   *
+   * 批量隐藏功能按钮接口
+   */
+  public showMenuItems(param: { menuList: WxMenu[] }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.showMenuItems({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 界面操作
+   *
+   * 隐藏所有非基础按钮接口
+   */
+  public hideAllNonBaseMenuItem() {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.hideAllNonBaseMenuItem({
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 界面操作
+   *
+   * 显示所有功能按钮接口
+   */
+  public showAllNonBaseMenuItem() {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.showAllNonBaseMenuItem({
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 微信扫一扫
+   *
+   * 调起微信扫一扫接口
+   */
+  public scanQRCode(param: { needResult?: 0 | 1; scanType?: WxScanType[] }) {
+    return new Promise<{ resultStr: string }>((resolve, reject) => {
+      wx.scanQRCode({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 微信小店
+   *
+   * 跳转微信商品页接口
+   */
+  public openProductSpecificView(param: {
+    productId: string;
+    viewType?: 0 | 1 | 2;
+  }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.openProductSpecificView({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 微信卡券
+   *
+   * 拉取适用卡券列表并获取用户选择信息
+   */
+  public chooseCard(param: {
+    shopId?: string;
+    cardType?: string;
+    cardId?: string;
+    timestamp: number;
+    nonceStr: string;
+    signType: string;
+    cardSign: string;
+  }) {
+    return new Promise<{ cardList: Omit<WxCard, "code">[] }>(
+      (resolve, reject) => {
+        wx.chooseCard({
+          ...param,
+          success: resolve,
+          fail: reject,
+        });
+      },
+    );
+  }
+
+  /**
+   * 微信卡券
+   *
+   * 批量添加卡券接口
+   */
+  public addCard(param: { cardList: WxCard[] }) {
+    return new Promise<{ cardList: Omit<WxCard, "cardExt">[] }>(
+      (resolve, reject) => {
+        wx.addCard({
+          ...param,
+          success: resolve,
+          fail: reject,
+        });
+      },
+    );
+  }
+
+  /**
+   * 微信卡券
+   *
+   * 查看微信卡包中的卡券接口
+   */
+  public openCard(param: { cardList: WxCard[] }) {
+    return new Promise<unknown>((resolve, reject) => {
+      wx.openCard({
+        ...param,
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
+  /**
+   * 微信支付
+   *
+   * 发起一个微信支付请求
+   *
+   * https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_1_4.shtml
+   */
+  public requestPayment(param: {
+    appId: string;
+    timestamp: string;
+    nonceStr: string;
+    package: string;
+    signType: string;
+    paySign: string;
+  }) {
+    return new Promise<{ err_msg: string }>((resolve, reject) => {
+      wx.chooseWXPay({ ...param, success: resolve, fail: reject });
+    });
+  }
+
+  /**
+   * 快速输入
+   *
+   * 共享收货地址接口
+   */
+  public openAddress() {
+    return new Promise<{
+      userName: string;
+      postalCode: string;
+      provinceName: string;
+      cityName: string;
+      countryName: string;
+      detailInfo: string;
+      nationalCode: string;
+      telNumber: string;
+    }>((resolve, reject) => {
+      wx.openAddress({
         success: resolve,
         fail: reject,
       });

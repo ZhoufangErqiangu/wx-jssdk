@@ -61,7 +61,8 @@ export type WxApiMethod =
   | "showAllNonBaseMenuItem"
   | "closeWindow"
   | "scanQRCode"
-  | "openProductSpecificViewaddCard"
+  | "openProductSpecificView"
+  | "addCard"
   | "chooseCard"
   | "openCard";
 
@@ -285,6 +286,53 @@ export interface Wx {
    */
   stopRecord: (param: {
     success?: (res: { localId: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 监听录音自动停止接口
+   */
+  onVoiceRecordEnd: (param: {
+    success?: successCb;
+    fail?: failCb;
+    complete?: (res: { localId: string }) => void;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 播放语音接口
+   */
+  playVoice: (param: {
+    localId: string;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 暂停播放接口
+   */
+  pauseVoice: (param: {
+    localId: string;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 停止播放接口
+   */
+  stopVoice: (param: {
+    localId: string;
+    success?: successCb;
     fail?: failCb;
     complete?: completeCb;
   }) => void;
@@ -557,8 +605,7 @@ export interface Wx {
    *
    * https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_1_4.shtml
    */
-  invoke: (
-    func: "getBrandWCPayRequest",
+  chooseWXPay: (
     param: {
       appId: string;
       timestamp: string;
@@ -566,8 +613,10 @@ export interface Wx {
       package: string;
       signType: string;
       paySign: string;
+      success?: successCb<{ err_msg: string }>;
+      fail?: failCb;
+      complete?: completeCb;
     },
-    cb: (res: { err_msg: string }) => void,
   ) => void;
 
   /**
