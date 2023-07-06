@@ -61,7 +61,8 @@ export type WxApiMethod =
   | "showAllNonBaseMenuItem"
   | "closeWindow"
   | "scanQRCode"
-  | "openProductSpecificViewaddCard"
+  | "openProductSpecificView"
+  | "addCard"
   | "chooseCard"
   | "openCard";
 
@@ -87,6 +88,10 @@ export interface BaseParams {
    */
   trigger?: (...args: any[]) => void;
 }
+
+export type successCb<T = unknown> = (res: T) => void;
+export type failCb = (res: { errMsg: string }) => void;
+export type completeCb = (res: { errMsg: string }) => void;
 
 export type WxImgSizeType = "original" | "compressed";
 
@@ -154,6 +159,8 @@ export interface Wx {
       checkResult: Record<WxApiMethod, boolean>;
       errMsg: string;
     }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -167,6 +174,8 @@ export interface Wx {
     link: string;
     imgUrl: string;
     success?: () => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -179,7 +188,8 @@ export interface Wx {
     link: string;
     imgUrl: string;
     success?: () => void;
-    cancel?: () => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -193,6 +203,8 @@ export interface Wx {
     link: string;
     imgUrl: string;
     success?: () => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -205,6 +217,8 @@ export interface Wx {
     sizeType?: WxImgSizeType[];
     sourceType?: WxImgSource[];
     success?: (res: { localIds: string[] }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -223,6 +237,8 @@ export interface Wx {
     localId: string;
     isShowProgressTips?: 0 | 1;
     success?: (res: { serverId: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -234,6 +250,8 @@ export interface Wx {
     serverId: string;
     isShowProgressTips?: 0 | 1;
     success?: (res: { localId: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -246,6 +264,8 @@ export interface Wx {
   getLocalImgData: (param: {
     localId: string;
     success?: (res: { localData: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -253,14 +273,69 @@ export interface Wx {
    *
    * 开始录音接口
    */
-  startRecord: () => void;
+  startRecord: (param: {
+    success?: () => void;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 音频接口
    *
    * 停止录音接口
    */
-  stopRecord: (param: { success?: (res: { localId: string }) => void }) => void;
+  stopRecord: (param: {
+    success?: (res: { localId: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 监听录音自动停止接口
+   */
+  onVoiceRecordEnd: (param: {
+    success?: successCb;
+    fail?: failCb;
+    complete?: (res: { localId: string }) => void;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 播放语音接口
+   */
+  playVoice: (param: {
+    localId: string;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 暂停播放接口
+   */
+  pauseVoice: (param: {
+    localId: string;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
+
+  /**
+   * 音频接口
+   *
+   * 停止播放接口
+   */
+  stopVoice: (param: {
+    localId: string;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 音频接口
@@ -269,6 +344,8 @@ export interface Wx {
    */
   onVoicePlayEnd: (param: {
     success?: (res: { localId: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -280,6 +357,8 @@ export interface Wx {
     localId: string;
     isShowProgressTips?: 0 | 1;
     success?: (res: { serverId: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -291,6 +370,8 @@ export interface Wx {
     serverId: string;
     isShowProgressTips?: 0 | 1;
     success?: (res: { localId: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -302,6 +383,8 @@ export interface Wx {
     localId: string;
     isShowProgressTips?: 0 | 1;
     success?: (res: { translateResult: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -311,6 +394,8 @@ export interface Wx {
    */
   getNetworkType: (param: {
     success?: (res: { networkType: WxNetworkType }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -326,6 +411,8 @@ export interface Wx {
     scale?: number;
     infoUrl?: string;
     success?: () => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -341,6 +428,8 @@ export interface Wx {
       speed: number;
       accuracy: number;
     }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -350,7 +439,9 @@ export interface Wx {
    */
   startSearchBeacons: (param: {
     ticket: string;
-    complete?: (argv: { errMsg: string }) => void;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -359,7 +450,9 @@ export interface Wx {
    * 关闭查找周边ibeacon设备接口
    */
   stopSearchBeacons: (param: {
-    complete?: (argv: { errMsg: string }) => void;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -368,7 +461,9 @@ export interface Wx {
    * 监听周边ibeacon设备接口
    */
   onSearchBeacons: (param: {
-    complete?: (argv: { errMsg: string }) => void;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -376,35 +471,57 @@ export interface Wx {
    *
    * 关闭当前网页窗口接口
    */
-  closeWindow: () => void;
+  closeWindow: (param: {
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 界面操作
    *
    * 批量隐藏功能按钮接口
    */
-  hideMenuItems: (param: { menuList: WxMenu[] }) => void;
+  hideMenuItems: (param: {
+    menuList: WxMenu[];
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 界面操作
    *
    * 批量显示功能按钮接口
    */
-  showMenuItems: (param: { menuList: WxMenu[] }) => void;
+  showMenuItems: (param: {
+    menuList: WxMenu[];
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 界面操作
    *
    * 隐藏所有非基础按钮接口
    */
-  hideAllNonBaseMenuItem: () => void;
+  hideAllNonBaseMenuItem: (param: {
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 界面操作
    *
    * 显示所有功能按钮接口
    */
-  showAllNonBaseMenuItem: () => void;
+  showAllNonBaseMenuItem: (param: {
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 微信扫一扫
@@ -415,6 +532,8 @@ export interface Wx {
     needResult?: 0 | 1;
     scanType?: WxScanType[];
     success?: (res: { resultStr: string }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -432,6 +551,9 @@ export interface Wx {
      * 2.小店商品详情页
      */
     viewType?: 0 | 1 | 2;
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -448,6 +570,8 @@ export interface Wx {
     signType: string;
     cardSign: string;
     success?: (res: { cardList: Omit<WxCard, "code">[] }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -458,6 +582,8 @@ export interface Wx {
   addCard: (param: {
     cardList: WxCard[];
     success?: (res: { cardList: Omit<WxCard, "cardExt">[] }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 
   /**
@@ -465,7 +591,12 @@ export interface Wx {
    *
    * 查看微信卡包中的卡券接口
    */
-  openCard: (param: { cardList: WxCard[] }) => void;
+  openCard: (param: {
+    cardList: WxCard[];
+    success?: successCb;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 微信支付
@@ -474,8 +605,7 @@ export interface Wx {
    *
    * https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_1_4.shtml
    */
-  invoke: (
-    func: "getBrandWCPayRequest",
+  chooseWXPay: (
     param: {
       appId: string;
       timestamp: string;
@@ -483,8 +613,10 @@ export interface Wx {
       package: string;
       signType: string;
       paySign: string;
+      success?: successCb<{ err_msg: string }>;
+      fail?: failCb;
+      complete?: completeCb;
     },
-    cb: (res: { err_msg: string }) => void,
   ) => void;
 
   /**
@@ -503,6 +635,8 @@ export interface Wx {
       nationalCode: string;
       telNumber: string;
     }) => void;
+    fail?: failCb;
+    complete?: completeCb;
   }) => void;
 }
 
@@ -514,3 +648,5 @@ export interface Wx {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const wx = window.wx as Wx;
+
+export * from "./noneCb";

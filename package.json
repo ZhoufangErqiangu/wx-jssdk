@@ -1,6 +1,6 @@
 {
   "name": "@liuhlightning/wx-jssdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "use wx jssdk",
   "keywords": [
     "weichat",
@@ -19,6 +19,7 @@
   ],
   "packageManager": "yarn@1.22.19",
   "scripts": {
+    "pub":"npm publish --access=public",
     "build": "tsc -p tsconfig.build.json",
     "test": "jest"
   },
