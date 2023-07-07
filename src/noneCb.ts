@@ -20,14 +20,42 @@ import {
 export class WxClass {
   public wxo = wx;
   public ready = false;
+  public debug = false;
+  public appId: string;
+  public timestamp: number;
+  public nonceStr: string;
+  public signature: string;
+  public jsApiList: WxApiMethod[];
 
   constructor(conf: WxConfigData) {
-    wx.config(conf);
-    wx.ready(() => {
-      this.ready = true;
-    });
-    wx.error(({ errMsg }) => {
-      throw new Error(errMsg);
+    const { appId, timestamp, nonceStr, signature, jsApiList } = conf;
+    this.appId = appId;
+    this.timestamp = timestamp;
+    this.nonceStr = nonceStr;
+    this.signature = signature;
+    this.jsApiList = jsApiList;
+  }
+
+  /**
+   * 通过config接口注入权限验证配置
+   */
+  public config() {
+    return new Promise<void>((resolve, reject) => {
+      wx.config({
+        debug: this.debug,
+        appId: this.appId,
+        timestamp: this.timestamp,
+        nonceStr: this.nonceStr,
+        signature: this.signature,
+        jsApiList: this.jsApiList,
+      });
+      wx.ready(() => {
+        this.ready = true;
+        resolve();
+      });
+      wx.error((err) => {
+        reject(err);
+      });
     });
   }
 
@@ -37,6 +65,7 @@ export class WxClass {
    * 判断当前客户端版本是否支持指定JS接口
    */
   public checkJsApi(jsApiList: WxApiMethod[]) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{
       checkResult: Record<WxApiMethod, boolean>;
       errMsg: string;
@@ -60,6 +89,7 @@ export class WxClass {
     link: string;
     imgUrl: string;
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<void>((resolve, reject) => {
       wx.updateAppMessageShareData({
         ...param,
@@ -79,6 +109,7 @@ export class WxClass {
     link: string;
     imgUrl: string;
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<void>((resolve, reject) => {
       wx.updateTimelineShareData({
         ...param,
@@ -99,6 +130,7 @@ export class WxClass {
     link: string;
     imgUrl: string;
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<void>((resolve, reject) => {
       wx.onMenuShareWeibo({
         ...param,
@@ -118,6 +150,7 @@ export class WxClass {
     sizeType: WxImgSizeType[];
     sourceType: WxImgSource[];
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ localIds: string[] }>((resolve, reject) => {
       wx.chooseImage({
         ...param,
@@ -133,6 +166,7 @@ export class WxClass {
    * 预览图片接口
    */
   public previewImage(param: { current: string; urls: string[] }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return wx.previewImage(param);
   }
 
@@ -142,6 +176,7 @@ export class WxClass {
    * 上传图片接口
    */
   public uploadImage(param: { localId: string; isShowProgressTips: 0 | 1 }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ serverId: string }>((resolve, reject) => {
       wx.uploadImage({
         ...param,
@@ -157,6 +192,7 @@ export class WxClass {
    * 下载图片接口
    */
   public downloadImage(param: { serverId: string; isShowProgressTips: 0 | 1 }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ localId: string }>((resolve, reject) => {
       wx.downloadImage({
         ...param,
@@ -174,6 +210,7 @@ export class WxClass {
    * 备注：此接口仅在 iOS WKWebview 下提供，用于兼容 iOS WKWebview 不支持 localId 直接显示图片的问题。
    */
   public getLocalImgData(param: { localId: string }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ localData: string }>((resolve, reject) => {
       wx.getLocalImgData({
         ...param,
@@ -189,6 +226,7 @@ export class WxClass {
    * 开始录音接口
    */
   public startRecord() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<void>((resolve, reject) => {
       wx.startRecord({
         success: resolve,
@@ -203,6 +241,7 @@ export class WxClass {
    * 停止录音接口
    */
   public stopRecord() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ localId: string }>((resolve, reject) => {
       wx.stopRecord({
         success: resolve,
@@ -217,6 +256,7 @@ export class WxClass {
    * 监听录音自动停止接口
    */
   public onVoiceRecordEnd(param: { localId: string }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ localId: string }>((resolve, reject) => {
       wx.onVoiceRecordEnd({
         ...param,
@@ -232,6 +272,7 @@ export class WxClass {
    * 播放语音接口
    */
   public playVoice(param: { localId: string }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.playVoice({
         ...param,
@@ -247,6 +288,7 @@ export class WxClass {
    * 暂停播放接口
    */
   public pauseVoice(param: { localId: string }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.pauseVoice({
         ...param,
@@ -262,6 +304,7 @@ export class WxClass {
    * 停止播放接口
    */
   public stopVoice(param: { localId: string }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.stopVoice({
         ...param,
@@ -277,6 +320,7 @@ export class WxClass {
    * 监听语音播放完毕接口
    */
   public onVoicePlayEnd(param: { localId: string }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ localId: string }>((resolve, reject) => {
       wx.onVoicePlayEnd({
         ...param,
@@ -292,6 +336,7 @@ export class WxClass {
    * 上传语音接口
    */
   public uploadVoice(param: { localId: string; isShowProgressTips: 0 | 1 }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ serverId: string }>((resolve, reject) => {
       wx.uploadVoice({
         ...param,
@@ -307,6 +352,7 @@ export class WxClass {
    * 下载语音接口
    */
   public downloadVoice(param: { serverId: string; isShowProgressTips: 0 | 1 }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ localId: string }>((resolve, reject) => {
       wx.downloadVoice({
         ...param,
@@ -322,6 +368,7 @@ export class WxClass {
    * 识别音频并返回识别结果接口
    */
   public translateVoice(param: { localId: string; isShowProgressTips: 0 | 1 }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ translateResult: string }>((resolve, reject) => {
       wx.translateVoice({
         ...param,
@@ -337,6 +384,7 @@ export class WxClass {
    * 获取网络状态接口
    */
   public getNetworkType() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ networkType: WxNetworkType }>((resolve, reject) => {
       wx.getNetworkType({
         success: resolve,
@@ -358,6 +406,7 @@ export class WxClass {
     scale?: number;
     infoUrl?: string;
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<void>((resolve, reject) => {
       wx.openLocation({
         ...param,
@@ -373,6 +422,7 @@ export class WxClass {
    * 获取地理位置接口
    */
   public getLocation(param: { type?: WxLocationType }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{
       latitude: number;
       longitude: number;
@@ -393,6 +443,7 @@ export class WxClass {
    * 开启查找周边ibeacon设备接口
    */
   public startSearchBeacons(param: { ticket: string }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.startSearchBeacons({
         ...param,
@@ -408,6 +459,7 @@ export class WxClass {
    * 关闭查找周边ibeacon设备接口
    */
   public stopSearchBeacons() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.stopSearchBeacons({
         success: resolve,
@@ -422,6 +474,7 @@ export class WxClass {
    * 监听周边ibeacon设备接口
    */
   public onSearchBeacons() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.onSearchBeacons({
         success: resolve,
@@ -436,6 +489,7 @@ export class WxClass {
    * 关闭当前网页窗口接口
    */
   public closeWindow() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.closeWindow({
         success: resolve,
@@ -450,6 +504,7 @@ export class WxClass {
    * 批量隐藏功能按钮接口
    */
   public hideMenuItems(param: { menuList: WxMenu[] }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.hideMenuItems({
         ...param,
@@ -465,6 +520,7 @@ export class WxClass {
    * 批量隐藏功能按钮接口
    */
   public showMenuItems(param: { menuList: WxMenu[] }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.showMenuItems({
         ...param,
@@ -480,6 +536,7 @@ export class WxClass {
    * 隐藏所有非基础按钮接口
    */
   public hideAllNonBaseMenuItem() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.hideAllNonBaseMenuItem({
         success: resolve,
@@ -494,6 +551,7 @@ export class WxClass {
    * 显示所有功能按钮接口
    */
   public showAllNonBaseMenuItem() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.showAllNonBaseMenuItem({
         success: resolve,
@@ -508,6 +566,7 @@ export class WxClass {
    * 调起微信扫一扫接口
    */
   public scanQRCode(param: { needResult?: 0 | 1; scanType?: WxScanType[] }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ resultStr: string }>((resolve, reject) => {
       wx.scanQRCode({
         ...param,
@@ -526,6 +585,7 @@ export class WxClass {
     productId: string;
     viewType?: 0 | 1 | 2;
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.openProductSpecificView({
         ...param,
@@ -549,6 +609,7 @@ export class WxClass {
     signType: string;
     cardSign: string;
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ cardList: Omit<WxCard, "code">[] }>(
       (resolve, reject) => {
         wx.chooseCard({
@@ -566,6 +627,7 @@ export class WxClass {
    * 批量添加卡券接口
    */
   public addCard(param: { cardList: WxCard[] }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ cardList: Omit<WxCard, "cardExt">[] }>(
       (resolve, reject) => {
         wx.addCard({
@@ -583,6 +645,7 @@ export class WxClass {
    * 查看微信卡包中的卡券接口
    */
   public openCard(param: { cardList: WxCard[] }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<unknown>((resolve, reject) => {
       wx.openCard({
         ...param,
@@ -607,6 +670,7 @@ export class WxClass {
     signType: string;
     paySign: string;
   }) {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{ err_msg: string }>((resolve, reject) => {
       wx.chooseWXPay({ ...param, success: resolve, fail: reject });
     });
@@ -618,6 +682,7 @@ export class WxClass {
    * 共享收货地址接口
    */
   public openAddress() {
+    if (!this.ready) throw new Error("wx is not ready");
     return new Promise<{
       userName: string;
       postalCode: string;
