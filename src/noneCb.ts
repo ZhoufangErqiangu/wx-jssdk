@@ -22,33 +22,17 @@ export class WxClass {
   public ready = false;
   public debug = false;
   public appId: string;
-  public timestamp: number;
-  public nonceStr: string;
-  public signature: string;
-  public jsApiList: WxApiMethod[];
 
-  constructor(conf: WxConfigData) {
-    const { appId, timestamp, nonceStr, signature, jsApiList } = conf;
+  constructor(appId: string) {
     this.appId = appId;
-    this.timestamp = timestamp;
-    this.nonceStr = nonceStr;
-    this.signature = signature;
-    this.jsApiList = jsApiList;
   }
 
   /**
    * 通过config接口注入权限验证配置
    */
-  public config() {
+  public config(conf: Omit<WxConfigData, "appId">) {
     return new Promise<void>((resolve, reject) => {
-      wx.config({
-        debug: this.debug,
-        appId: this.appId,
-        timestamp: this.timestamp,
-        nonceStr: this.nonceStr,
-        signature: this.signature,
-        jsApiList: this.jsApiList,
-      });
+      wx.config({ ...conf, appId: this.appId });
       wx.ready(() => {
         this.ready = true;
         resolve();
