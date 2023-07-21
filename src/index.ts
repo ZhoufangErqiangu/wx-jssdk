@@ -28,7 +28,7 @@ export interface WxConfigData {
   /**
    * 必填，需要使用的JS接口列表
    */
-  jsApiList: WxApiMethod[];
+  jsApiList: (WxApiMethod | string)[];
 }
 
 export type WxApiMethod =
@@ -64,7 +64,8 @@ export type WxApiMethod =
   | "openProductSpecificView"
   | "addCard"
   | "chooseCard"
-  | "openCard";
+  | "openCard"
+  | "chooseWXPay";
 
 export interface BaseParams {
   /**
@@ -605,19 +606,17 @@ export interface Wx {
    *
    * https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_1_4.shtml
    */
-  chooseWXPay: (
-    param: {
-      appId: string;
-      timestamp: string;
-      nonceStr: string;
-      package: string;
-      signType: string;
-      paySign: string;
-      success?: successCb<{ err_msg: string }>;
-      fail?: failCb;
-      complete?: completeCb;
-    },
-  ) => void;
+  chooseWXPay: (param: {
+    appId: string;
+    timestamp: string;
+    nonceStr: string;
+    package: string;
+    signType: string;
+    paySign: string;
+    success?: successCb<{ err_msg: string }>;
+    fail?: failCb;
+    complete?: completeCb;
+  }) => void;
 
   /**
    * 快速输入
